@@ -1,5 +1,5 @@
 #pragma once
-
+#if 0
 #include "Mod.hpp"
 #include "utility/FunctionHook.hpp"
 
@@ -24,3 +24,5 @@ protected:
     std::unique_ptr<FunctionHook> m_update_camera_controller_hook;
     std::unique_ptr<FunctionHook> m_update_camera_controller2_hook;
 };
+
+#endif

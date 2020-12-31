@@ -22,17 +22,17 @@ public:
         return m_mods;
     }
 
-    const auto& get_types() const {
+    /*const auto& get_types() const {
         return m_types;
-    }
+    }*/
 
     const auto& get_keyboard_state() const {
         return m_last_keys;
     }
 
-    const auto& get_globals() const {
+    /*const auto& get_globals() const {
         return m_globals;
-    }
+    }*/
 
     Address get_module() const {
         return m_game_module;

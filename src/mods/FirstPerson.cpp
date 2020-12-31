@@ -1,3 +1,4 @@
+#if 0
 #include <unordered_set>
 
 #include <spdlog/spdlog.h>
@@ -8,7 +9,7 @@
 #include "sdk/REMath.hpp"
 
 #include "FirstPerson.hpp"
-#if 0
+
 FirstPerson* g_first_person = nullptr;
 
 FirstPerson::FirstPerson() {

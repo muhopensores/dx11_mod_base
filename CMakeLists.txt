@@ -45,7 +45,7 @@ set(GIT_HASH ${GIT_COMMIT_HASH})
 set(GIT_DATE ${GIT_COMMITTER_DATE})
 
 configure_file(Config.hpp.in ${CMAKE_SOURCE_DIR}/src/Config.hpp @ONLY)
-
+add_compile_options(/W0)
 # Statically compile runtime
 string(REGEX REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
