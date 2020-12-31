@@ -22,10 +22,12 @@ add_library(minhook STATIC
 project(imgui)
 
 add_library(imgui STATIC
+            imgui/imconfig.h
             imgui/imgui_demo.cpp
             #imgui/imgui_widgets.cpp
             imgui/imgui_draw.cpp
-            imgui/imgui.cpp)
+            imgui/imgui.cpp
+            imgui/imgui.h)
 
 project(jsonstthm)
 
