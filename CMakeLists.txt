@@ -7,6 +7,9 @@ include_directories(${CMAKE_SOURCE_DIR}/dependencies/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/minhook/include)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/spdlog/include)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/glm)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/ImWindow)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/JsonStthm)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/EasyWindow)
 
 # set output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -43,9 +46,9 @@ set(LOG_ENTRY "${CMAKE_PROJECT_NAME} ModFramework entry")
 set(CONFIG_FILENAME "${CMAKE_PROJECT_NAME}_fw_config.txt")
 set(GIT_HASH ${GIT_COMMIT_HASH})
 set(GIT_DATE ${GIT_COMMITTER_DATE})
-
 configure_file(Config.hpp.in ${CMAKE_SOURCE_DIR}/src/Config.hpp @ONLY)
 
+add_compile_options(/W0)
 # Statically compile runtime
 string(REGEX REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 

@@ -3,8 +3,8 @@
 #include <imgui/imgui.h>
 
 // ours with XInput removed
-#include "fw-imgui/imgui_impl_win32.h"
-#include "fw-imgui/imgui_impl_dx11.h"
+//#include "fw-imgui/imgui_impl_win32.h"
+//#include "fw-imgui/imgui_impl_dx11.h"
 
 #include "utility/Module.hpp"
 
@@ -15,7 +15,44 @@
 
 #include "Config.hpp"
 
+#include "WindowLayout/sample.h"
+#include "ImWindowDX11/ImwWindowManagerDX11.h"
+
 std::unique_ptr<ModFramework> g_framework{};
+
+bool draw_imwindow = false;
+bool should_quit = false;
+
+void update_thread_func(ModFramework* mf) {
+	spdlog::info("update thread entry");
+	/*while (true) {
+		//mf->on_frame();
+		std::this_thread::sleep_for(std::chrono::milliseconds(17)); // 1000 ms / 60 fps
+	}*/
+	/*
+	PreInitSample();
+
+	ImWindow::ImwWindowManagerDX11 oMgr(true);
+
+	oMgr.Init();
+
+	InitSample();
+
+	while (oMgr.Run(false) && oMgr.Run(draw_imwindow)) {
+		mf->on_frame();
+		if (GetAsyncKeyState(VK_INSERT) & 1) {
+			auto wew = oMgr.GetMainPlatformWindow();
+			draw_imwindow = !draw_imwindow;
+			wew->Show(draw_imwindow);
+		}
+		if (should_quit) {
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(17));
+	}
+	*/
+	ImGui::Shutdown();
+}
 
 ModFramework::ModFramework()
     : m_game_module{ GetModuleHandle(0) },
@@ -28,7 +65,9 @@ ModFramework::ModFramework()
 #ifdef DEBUG
     spdlog::set_level(spdlog::level::debug);
 #endif
-
+	m_update_thread = std::thread{ update_thread_func, this };
+	m_update_thread.detach();
+#ifdef HOOK_D3D
     m_d3d11_hook = std::make_unique<D3D11Hook>();
     m_d3d11_hook->on_present([this](D3D11Hook& hook) { on_frame(); });
     m_d3d11_hook->on_resize_buffers([this](D3D11Hook& hook) { on_reset(); });
@@ -38,11 +77,28 @@ ModFramework::ModFramework()
     if (m_valid) {
         spdlog::info("Hooked D3D11");
     }
+#endif
 }
 
 ModFramework::~ModFramework() {
-
+	should_quit = true;
 }
+
+// this is unfortunate.
+void ModFramework::on_direct_input_keys(const std::array<uint8_t, 256>& keys) {
+	if (keys[m_menu_key] && m_last_keys[m_menu_key] == 0) {
+		std::lock_guard _{ m_input_mutex };
+		m_draw_ui = !m_draw_ui;
+
+		// Save the config if we close the UI
+		if (!m_draw_ui && m_game_data_initialized) {
+			save_config();
+		}
+	}
+
+	m_last_keys = keys;
+}
+
 
 void ModFramework::on_frame() {
     spdlog::debug("on_frame");
@@ -58,27 +114,12 @@ void ModFramework::on_frame() {
         return;
     }
 
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-
     if (m_error.empty() && m_game_data_initialized) {
         m_mods->on_frame();
     }
 
-    draw_ui();
-
-    ImGui::EndFrame();
-    ImGui::Render();
-
-    ID3D11DeviceContext* context = nullptr;
-    m_d3d11_hook->get_device()->GetImmediateContext(&context);
-
-    context->OMSetRenderTargets(1, &m_main_render_target_view, NULL);
-
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
-
+#if HOOK_D3D
 void ModFramework::on_reset() {
     spdlog::info("Reset!");
 
@@ -118,7 +159,7 @@ void ModFramework::on_direct_input_keys(const std::array<uint8_t, 256>& keys) {
 
     m_last_keys = keys;
 }
-
+#endif
 void ModFramework::save_config() {
     spdlog::info("Saving config to file");
 
@@ -136,6 +177,43 @@ void ModFramework::save_config() {
     spdlog::info("Saved config");
 }
 
+bool ModFramework::initialize() {
+	if (m_initialized) {
+		return true;
+	}
+
+	spdlog::info("Attempting to initialize");
+
+	if (m_first_frame) {
+		m_first_frame = false;
+
+		spdlog::info("Starting game data initialization thread");
+
+		// Game specific initialization stuff
+		std::thread init_thread([this]() {
+			m_mods = std::make_unique<Mods>();
+
+			auto e = m_mods->on_initialize();
+
+			if (e) {
+				if (e->empty()) {
+					m_error = "An unknown error has occurred.";
+				}
+				else {
+					m_error = *e;
+				}
+			}
+
+			m_game_data_initialized = true;
+		});
+
+		init_thread.detach();
+	}
+
+	return true;
+}
+
+#if HOOK_D3D
 void ModFramework::draw_ui() {
     std::lock_guard _{ m_input_mutex };
 
@@ -218,100 +296,6 @@ void ModFramework::draw_about() {
     ImGui::TreePop();
 }
 
-bool ModFramework::initialize() {
-    if (m_initialized) {
-        return true;
-    }
-
-    spdlog::info("Attempting to initialize");
-
-    auto device = m_d3d11_hook->get_device();
-    auto swap_chain = m_d3d11_hook->get_swap_chain();
-
-    // Wait.
-    if (device == nullptr || swap_chain == nullptr) {
-        spdlog::info("Device or SwapChain null. DirectX 12 may be in use. A crash may occur.");
-        return false;
-    }
-
-    ID3D11DeviceContext* context = nullptr;
-    device->GetImmediateContext(&context);
-
-    DXGI_SWAP_CHAIN_DESC swap_desc{};
-    swap_chain->GetDesc(&swap_desc);
-
-    m_wnd = swap_desc.OutputWindow;
-
-    // Explicitly call destructor first
-    m_windows_message_hook.reset();
-    m_windows_message_hook = std::make_unique<WindowsMessageHook>(m_wnd);
-    m_windows_message_hook->on_message = [this](auto wnd, auto msg, auto wParam, auto lParam) {
-        return on_message(wnd, msg, wParam, lParam);
-    };
-
-    // just do this instead of rehooking because there's no point.
-    if (m_first_frame) {
-        m_dinput_hook = std::make_unique<DInputHook>(m_wnd);
-    }
-    else {
-        m_dinput_hook->set_window(m_wnd);
-    }
-
-    spdlog::info("Creating render target");
-
-    create_render_target();
-
-    spdlog::info("Window Handle: {0:x}", (uintptr_t)m_wnd);
-    spdlog::info("Initializing ImGui");
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-
-    spdlog::info("Initializing ImGui Win32");
-
-    if (!ImGui_ImplWin32_Init(m_wnd)) {
-        spdlog::error("Failed to initialize ImGui.");
-        return false;
-    }
-
-    spdlog::info("Initializing ImGui D3D11");
-
-    if (!ImGui_ImplDX11_Init(device, context)) {
-        spdlog::error("Failed to initialize ImGui.");
-        return false;
-    }
-
-    ImGui::StyleColorsDark();
-
-    if (m_first_frame) {
-        m_first_frame = false;
-
-        spdlog::info("Starting game data initialization thread");
-
-        // Game specific initialization stuff
-        std::thread init_thread([this]() {
-            m_mods = std::make_unique<Mods>();
-
-            auto e = m_mods->on_initialize();
-
-            if (e) {
-                if (e->empty()) {
-                    m_error = "An unknown error has occurred.";
-                }
-                else {
-                    m_error = *e;
-                }
-            }
-
-            m_game_data_initialized = true;
-        });
-
-        init_thread.detach();
-    }
-
-    return true;
-}
-
 void ModFramework::create_render_target() {
     cleanup_render_target();
 
@@ -328,4 +312,5 @@ void ModFramework::cleanup_render_target() {
         m_main_render_target_view = nullptr;
     }
 }
+#endif
 

@@ -60,12 +60,30 @@ set(FRAMEWORK_SRC
     Config.hpp
 )
 
+set(IM_WINDOW_DX11
+    ImWindowDX11/ImwPlatformWindowDX11.cpp  
+    ImWindowDX11/ImwPlatformWindowDX11.h
+    ImWindowDX11/ImwWindowManagerDX11.cpp   
+    ImWindowDX11/ImwWindowManagerDX11.h  
+    ImWindowDX11/Win32MessageHelper.cpp
+    ImWindowDX11/Win32MessageHelper.h
+)
+
+set(IM_WINDOW_EASY_WINDOW
+    ImWindowEasyWindow/ImwPlatformWindowEasyWindow.cpp  
+    ImWindowEasyWindow/ImwPlatformWindowEasyWindow.h    
+    ImWindowEasyWindow/ImwWindowManagerEasyWindow.cpp
+    ImWindowEasyWindow/ImwWindowManagerEasyWindow.h
+)
+
 source_group("imgui", FILES ${IMGUI_SRC})
 source_group("Hooks" FILES ${HOOKS_SRC})
 source_group("Mods" FILES ${MODS_SRC})
 source_group("SDK" FILES ${SDK_SRC})
 source_group("Utility" FILES ${UTILITY_SRC})
 source_group("Framework" FILES ${FRAMEWORK_SRC})
+source_group("ImWindowDX11" FILES ${IM_WINDOW_DX11})
+source_group("ImWindowEasyWindow" FILES ${IM_WINDOW_EASY_WINDOW})
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
             Main.cpp
@@ -75,10 +93,12 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
             ${HOOKS_SRC}
             ${IMGUI_SRC}
             ${UTILITY_SRC}
+            ${IM_WINDOW_DX11}
+            ${IM_WINDOW_EASY_WINDOW}
             ${FRAMEWORK_SRC}
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC imgui minhook d3d11 glm_static shlwapi)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC imgui minhook d3d11 glm_static jsonstthm imwindow easywindow shlwapi)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC /GS- /GR-)
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
 

@@ -300,11 +300,11 @@ public:
     virtual void on_config_save(utility::Config& cfg) {};
 
     // Game-specific callbacks
-    virtual void on_pre_update_transform(RETransform* transform) {};
+    /*virtual void on_pre_update_transform(RETransform* transform) {};
     virtual void on_update_transform(RETransform* transform) {};
     virtual void on_pre_update_camera_controller(RopewayPlayerCameraController* controller) {};
     virtual void on_update_camera_controller(RopewayPlayerCameraController* controller) {};
     virtual void on_pre_update_camera_controller2(RopewayPlayerCameraController* controller) {};
-    virtual void on_update_camera_controller2(RopewayPlayerCameraController* controller) {};
+    virtual void on_update_camera_controller2(RopewayPlayerCameraController* controller) {};*/
 };
 

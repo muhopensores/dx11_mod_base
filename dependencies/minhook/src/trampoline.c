@@ -32,6 +32,10 @@
     #define ARRAYSIZE(A) (sizeof(A)/sizeof((A)[0]))
 #endif
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
+
 #if defined(_M_X64) || defined(__x86_64__)
     #include "./hde/hde64.h"
     typedef hde64s HDE;

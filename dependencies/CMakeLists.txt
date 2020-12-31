@@ -23,6 +23,40 @@ project(imgui)
 
 add_library(imgui STATIC
             imgui/imgui_demo.cpp
-            imgui/imgui_widgets.cpp
+            #imgui/imgui_widgets.cpp
             imgui/imgui_draw.cpp
             imgui/imgui.cpp)
+
+project(jsonstthm)
+
+add_library(jsonstthm STATIC
+            JsonStthm/JsonStthm.cpp
+            JsonStthm/JsonStthm.h
+            JsonStthm/JsonStthmConfig.h)
+
+project(imwindow)
+
+add_library(imwindow STATIC
+            ImWindow/ImwContainer.cpp
+            ImWindow/ImwContainer.h
+            ImWindow/ImwMenu.cpp
+            ImWindow/ImwMenu.h
+            ImWindow/ImwPlatformWindow.cpp
+            ImWindow/ImwPlatformWindow.h
+            ImWindow/ImwStatusBar.cpp
+            ImWindow/ImwStatusBar.h
+            ImWindow/ImwToolBar.cpp
+            ImWindow/ImwToolBar.h
+            ImWindow/ImwWindow.cpp
+            ImWindow/ImwWindow.h
+            ImWindow/ImwWindowManager.cpp
+            ImWindow/ImwWindowManager.h
+            ImWindow/ImwConfig.h)
+
+project(easywindow)
+
+add_library(easywindow STATIC
+            EasyWindow/EasyWindowWin32.cpp
+            EasyWindow/EasyWindow.cpp
+            EasyWindow/EasyWindow.h
+)

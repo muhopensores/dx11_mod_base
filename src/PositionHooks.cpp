@@ -1,3 +1,4 @@
+#if 0
 #include "Mods.hpp"
 #include "ModFramework.hpp"
 #include "utility/Scan.hpp"
@@ -193,3 +194,4 @@ void* PositionHooks::update_camera_controller2_hook(void* a1, RopewayPlayerCamer
     return g_hook->update_camera_controller2_hook_internal(a1, camera_controller);
 }
 
+#endif
