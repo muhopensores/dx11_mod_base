@@ -10,8 +10,8 @@ set(HOOKS_SRC
 )
 
 set(MODS_SRC
-    mods/SampleMod.hpp
-    mods/SampleMod.cpp
+    mods/SimpleMod.hpp
+    mods/SimpleMod.cpp
 )
 
 set(SDK_SRC

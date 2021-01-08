@@ -11,6 +11,7 @@ public:
 
     void on_frame() const;
     void on_draw_ui() const;
+    void on_draw_debug_ui() const;
 
     const auto& get_mods() const {
         return m_mods;
