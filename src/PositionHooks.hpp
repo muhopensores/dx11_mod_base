@@ -24,4 +24,8 @@ protected:
     std::unique_ptr<FunctionHook> m_update_camera_controller_hook;
     std::unique_ptr<FunctionHook> m_update_camera_controller2_hook;
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 #endif

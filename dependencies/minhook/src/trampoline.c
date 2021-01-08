@@ -56,6 +56,10 @@
     #define TRAMPOLINE_MAX_SIZE MEMORY_SLOT_SIZE
 #endif
 
+#ifdef _MSC_VER
+    #include <intrin.h>
+#endif
+
 //-------------------------------------------------------------------------
 static BOOL IsCodePadding(LPBYTE pInst, UINT size)
 {
