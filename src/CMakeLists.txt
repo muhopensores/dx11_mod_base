@@ -1,3 +1,8 @@
+set(MODS_SRC
+    mods/SimpleMod.hpp
+    mods/SimpleMod.cpp
+)
+
 set(HOOKS_SRC
     DInputHook.hpp
     DInputHook.cpp
@@ -7,11 +12,6 @@ set(HOOKS_SRC
     WindowsMessageHook.cpp
     PositionHooks.hpp
     PositionHooks.cpp
-)
-
-set(MODS_SRC
-    mods/SimpleMod.hpp
-    mods/SimpleMod.cpp
 )
 
 set(SDK_SRC
