@@ -10,10 +10,8 @@ set(HOOKS_SRC
 )
 
 set(MODS_SRC
-    mods/FirstPerson.hpp
-    mods/FirstPerson.cpp
-    mods/FreeCam.hpp
-    mods/FreeCam.cpp
+    mods/SampleMod.hpp
+    mods/SampleMod.cpp
 )
 
 set(SDK_SRC
@@ -66,6 +64,8 @@ source_group("Mods" FILES ${MODS_SRC})
 source_group("SDK" FILES ${SDK_SRC})
 source_group("Utility" FILES ${UTILITY_SRC})
 source_group("Framework" FILES ${FRAMEWORK_SRC})
+
+string(REGEX REPLACE "/W0" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
             Main.cpp
