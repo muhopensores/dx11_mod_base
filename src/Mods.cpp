@@ -1,12 +1,13 @@
 #include <spdlog/spdlog.h>
+#include "Mods.hpp"
 
 //#inlcude "YourMod.hpp"
 #include "mods/SimpleMod.hpp"
-#include "Mods.hpp"
+
 
 Mods::Mods()
 {
-	m_mods.emplace_back(std::make_unique<SimpleMod>());
+    m_mods.emplace_back(std::make_unique<SimpleMod>());
     //m_mods.emplace_back(std::make_unique<YourMod>());
 
 #ifdef DEVELOPER
