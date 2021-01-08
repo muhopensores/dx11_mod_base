@@ -1,4 +1,3 @@
-#if 0
 #pragma once
 #if 0
 #include "Mod.hpp"
@@ -48,8 +47,4 @@ private:
 
     bool m_first_time{ true };
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 #endif

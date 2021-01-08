@@ -140,7 +140,7 @@ public:
 		}
 
 		DWORD iWindowStyle = WS_OVERLAPPEDWINDOW; // E_NORMAL
-		DWORD iWindowExStyle = WS_EX_TOOLWINDOW;
+		DWORD iWindowExStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 
 		if (eStyle == E_STYLE_BORDERLESS)
 		{

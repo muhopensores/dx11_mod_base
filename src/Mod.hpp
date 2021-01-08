@@ -350,21 +350,18 @@ public:
     // Functionally equivalent, but on_frame will always get called, on_draw_ui can be disabled by ModFramework
     virtual void on_frame() {};
     virtual void on_draw_ui() {};
+	virtual void on_draw_debug_ui() {};
 
     virtual void on_config_load(const utility::Config& cfg) {};
     virtual void on_config_save(utility::Config& cfg) {};
 
     // Game-specific callbacks
-<<<<<<< HEAD
-    /*virtual void on_pre_update_transform(RETransform* transform) {};
+    /*
+    virtual void on_pre_update_transform(RETransform* transform) {};
     virtual void on_update_transform(RETransform* transform) {};
     virtual void on_pre_update_camera_controller(RopewayPlayerCameraController* controller) {};
     virtual void on_update_camera_controller(RopewayPlayerCameraController* controller) {};
     virtual void on_pre_update_camera_controller2(RopewayPlayerCameraController* controller) {};
-    virtual void on_update_camera_controller2(RopewayPlayerCameraController* controller) {};*/
-=======
-    //virtual void on_pre_update_transform(RETransform* transform) {};
-    //virtual void on_update_transform(RETransform* transform) {};
->>>>>>> master
+    virtual void on_update_camera_controller2(RopewayPlayerCameraController* controller) {};
+    */
 };
-

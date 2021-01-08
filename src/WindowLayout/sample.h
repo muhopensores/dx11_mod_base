@@ -15,6 +15,9 @@
 #include <Windows.h>
 #endif
 #include "ImWindow/ImwWindowManager.h"
+
+#include "ModFramework.hpp"
+
 using namespace ImWindow;
 
 static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
@@ -812,26 +815,73 @@ public:
 	}
 };
 
+class DebugWindow : public ImwWindow {
+public:
+	DebugWindow(ModFramework* mf,const char* pTitle = "DebugWindow")
+		: ImwWindow(ImWindow::E_WINDOW_MODE_ALONE)
+	{
+		p_mf = mf;
+		SetTitle(pTitle);
+	}
+	virtual void OnGui()
+	{
+		ImGui::Text("Debug window");
+
+
+		if (p_mf->is_error() && p_mf->is_ready()) {
+			p_mf->get_mods()->on_draw_debug_ui();
+		}
+		else if (!p_mf->is_ready()) {
+			ImGui::TextWrapped("ModFramework is currently initializing...");
+		}
+		else if(!p_mf->is_error()) {
+			ImGui::TextWrapped("ModFramework error: %s", p_mf->get_error().c_str());
+		}
+	}
+
+	ModFramework* p_mf;
+};
+
 class MyImwWindow : public ImwWindow, ImwMenu
 {
 public:
-	MyImwWindow(const char* pTitle = "MyImwWindow")
+	MyImwWindow(ModFramework* mf,const char* pTitle = "MyImwWindow")
 		: ImwWindow(ImWindow::E_WINDOW_MODE_ALONE)
 		, ImwMenu(0, false)
 	{
+		p_mf = mf;
 		SetTitle(pTitle);
 		m_pText[0] = 0;
 	}
 	virtual void OnGui()
 	{
 		ImGui::Text("Hello, world! I'm an alone window");
+		
+#ifdef GIT_HASH
+		ImGui::Text("Version: %s", GIT_HASH);
+		ImGui::Text("Date: %s", GIT_DATE);
+#endif
+		ImGui::Text("Menu Key: Insert");
 
-		if (ImGui::Button("Create new MyImwWindow3"))
-		{
-			new MyImwWindow3();
+		/*draw_about();*/
+
+		if (p_mf->is_error() && p_mf->is_ready()) {
+			p_mf->get_mods()->on_draw_ui();
+		}
+		else if (!p_mf->is_ready()) {
+			ImGui::TextWrapped("ModFramework is currently initializing...");
+		}
+		else if(!p_mf->is_error()) {
+			ImGui::TextWrapped("ModFramework error: %s", p_mf->get_error().c_str());
 		}
 
-		ImGui::InputText("Input", m_pText, 512);
+
+		/*if (ImGui::Button("Create new MyImwWindow3"))
+		{
+			new MyImwWindow3();
+		}*/
+
+		//ImGui::InputText("Input", m_pText, 512);
 
 		//ImGui::ShowMetricsWindow();
 	}
@@ -857,6 +907,7 @@ public:
 	}
 
 	char m_pText[512];
+	ModFramework* p_mf;
 };
 
 class PlaceholderWindow : public ImWindow::ImwWindow
@@ -879,7 +930,7 @@ void PreInitSample()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 }
 
-void InitSample()
+void InitSample(ModFramework* mf)
 {
 	ImWindow::ImwWindowManager& oMgr = *ImWindow::ImwWindowManager::GetInstance();
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -891,16 +942,17 @@ void InitSample()
 	//oMgr.GetMainPlatformWindow()->SetPos(2000,100);
 	oMgr.SetMainTitle("ImWindow sample");
 
-	ImwWindow* pWindowPlaceholder = new PlaceholderWindow();
+	//ImwWindow* pWindowPlaceholder = new PlaceholderWindow();
 
-	ImwWindow* pWindow1 = new MyImwWindow();
+	ImwWindow* pWindow1 = new MyImwWindow(mf);
+	ImwWindow* pDebugWindow = new DebugWindow(mf);
 
-	ImwWindow* pWindow2 = new MyImwWindowFillSpace();
+	/*ImwWindow* pWindow2 = new MyImwWindowFillSpace();
 
 	ImwWindow* pWindow3 = new MyImwWindow2("MyImwWindow2(1)");
 	ImwWindow* pWindow4 = new MyImwWindow2("MyImwWindow2(2)");
 	ImwWindow* pWindow5 = new MyImwWindow3();
-	pWindow5->SetClosable(false);
+	pWindow5->SetClosable(false);*/
 
 	ImwWindow* pStyleEditor = new StyleEditorWindow();
 	new MyMenu();
@@ -908,11 +960,12 @@ void InitSample()
 	new MyToolBar();
 
 	oMgr.Dock(pWindow1);
-	oMgr.Dock(pWindow2, E_DOCK_ORIENTATION_LEFT);
-	oMgr.DockWith(pWindowPlaceholder, pWindow2, E_DOCK_ORIENTATION_BOTTOM);
-	oMgr.DockWith(pWindow3, pWindow2, E_DOCK_ORIENTATION_TOP);
-	oMgr.DockWith(pWindow4, pWindow3, E_DOCK_ORIENTATION_CENTER);
-	oMgr.DockWith(pWindow5, pWindow1, E_DOCK_ORIENTATION_BOTTOM, 0.7f);
+	oMgr.Dock(pDebugWindow, E_DOCK_ORIENTATION_BOTTOM);
+	//oMgr.Dock(pWindow2, E_DOCK_ORIENTATION_LEFT);
+	//oMgr.DockWith(pWindowPlaceholder, pWindow2, E_DOCK_ORIENTATION_BOTTOM);
+	//oMgr.DockWith(pWindow3, pWindow2, E_DOCK_ORIENTATION_TOP);
+	//oMgr.DockWith(pWindow4, pWindow3, E_DOCK_ORIENTATION_CENTER);
+	//oMgr.DockWith(pWindow5, pWindow1, E_DOCK_ORIENTATION_BOTTOM, 0.7f);
 
 	//oMgr.Dock(pNodeWindow, E_DOCK_ORIENTATION_LEFT);
 	oMgr.Dock(pStyleEditor, E_DOCK_ORIENTATION_RIGHT, 0.375f);

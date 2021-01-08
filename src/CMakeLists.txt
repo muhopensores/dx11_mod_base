@@ -10,6 +10,8 @@ set(HOOKS_SRC
 )
 
 set(MODS_SRC
+    mods/SimpleMod.hpp
+    mods/SimpleMod.cpp
     mods/FirstPerson.hpp
     mods/FirstPerson.cpp
     mods/FreeCam.hpp

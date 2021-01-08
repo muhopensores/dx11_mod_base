@@ -1,12 +1,12 @@
 #include <spdlog/spdlog.h>
 
 //#inlcude "YourMod.hpp"
-
+#include "mods/SimpleMod.hpp"
 #include "Mods.hpp"
 
 Mods::Mods()
 {
-
+	m_mods.emplace_back(std::make_unique<SimpleMod>());
     //m_mods.emplace_back(std::make_unique<YourMod>());
 
 #ifdef DEVELOPER
@@ -38,6 +38,12 @@ void Mods::on_frame() const {
     for (auto& mod : m_mods) {
         mod->on_frame();
     }
+}
+
+void Mods::on_draw_debug_ui() const {
+	for (auto& mod : m_mods) {
+		mod->on_draw_debug_ui();
+	}
 }
 
 void Mods::on_draw_ui() const {

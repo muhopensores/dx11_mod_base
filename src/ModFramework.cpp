@@ -25,32 +25,28 @@ bool should_quit = false;
 
 void update_thread_func(ModFramework* mf) {
 	spdlog::info("update thread entry");
-	/*while (true) {
-		//mf->on_frame();
-		std::this_thread::sleep_for(std::chrono::milliseconds(17)); // 1000 ms / 60 fps
-	}*/
-	/*
+
 	PreInitSample();
 
-	ImWindow::ImwWindowManagerDX11 oMgr(true);
+	ImWindow::ImwWindowManagerDX11 o_mgr(true);
 
-	oMgr.Init();
+	o_mgr.Init();
 
-	InitSample();
+	InitSample(mf);
 
-	while (oMgr.Run(false) && oMgr.Run(draw_imwindow)) {
+	while (o_mgr.Run(false) && o_mgr.Run(draw_imwindow)) {
 		mf->on_frame();
 		if (GetAsyncKeyState(VK_INSERT) & 1) {
-			auto wew = oMgr.GetMainPlatformWindow();
+			auto mpw = o_mgr.GetMainPlatformWindow();
 			draw_imwindow = !draw_imwindow;
-			wew->Show(draw_imwindow);
+			mpw->Show(draw_imwindow);
 		}
 		if (should_quit) {
 			break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(17));
 	}
-	*/
+
 	ImGui::Shutdown();
 }
 

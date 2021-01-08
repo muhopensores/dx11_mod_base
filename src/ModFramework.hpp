@@ -21,30 +21,21 @@ public:
 	const auto& get_mods() const {
 		return m_mods;
 	}
-
-<<<<<<< HEAD
-	/*const auto& get_types() const {
-		return m_types;
-	}*/
-=======
+	
+	const auto& get_error() const {
+		return m_error;
+	}
     /*const auto& get_types() const {
         return m_types;
     }*/
->>>>>>> master
 
 	const auto& get_keyboard_state() const {
 		return m_last_keys;
 	}
 
-<<<<<<< HEAD
-	/*const auto& get_globals() const {
-		return m_globals;
-	}*/
-=======
     /*const auto& get_globals() const {
         return m_globals;
     }*/
->>>>>>> master
 
 	Address get_module() const {
 		return m_game_module;
@@ -52,6 +43,10 @@ public:
 
 	bool is_ready() const {
 		return m_game_data_initialized;
+	}
+
+	bool is_error() const {
+		return m_error.empty();
 	}
 
 	void on_frame();
