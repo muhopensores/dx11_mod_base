@@ -7,9 +7,10 @@ REM cmake .. -G "Visual Studio 15 2017 Win64" -T "Intel C++ Compiler 19.0" -DDEV
 cmake .. -G "Visual Studio 15 2017 Win64" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DDEVELOPER_MODE=OFF
 cmake --build . --config Debug
 cd ..
-mkdir lsp
-cd lsp
-cmake .. -G "Ninja" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_C_COMPILER="clang-cl.exe" -DCMAKE_CXX_COMPILER="clang-cl.exe" -DCMAKE_LINKER="lld-link.exe"
-copy compile_commands.json ..\compile_commands.json
-cd ..
+REM emacs lsp bullshit
+REM mkdir lsp
+REM cd lsp
+REM cmake .. -G "Ninja" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_C_COMPILER="clang-cl.exe" -DCMAKE_CXX_COMPILER="clang-cl.exe" -DCMAKE_LINKER="lld-link.exe"
+REM copy compile_commands.json ..\compile_commands.json
+REM cd ..
 pause
