@@ -1,3 +1,4 @@
+#if 0
 #include "ModSample.hpp"
 
 
@@ -7,7 +8,7 @@
 std::optional<std::string> ModSample::on_initialize() {
   // uintptr_t base = g_framework->get_module().as<uintptr_t>();
 
-  if (!install_hook(0xBADF00D, m_function_hook, &detour, &jmp_ret, 5)) {
+  if (!install_hook_offset(0xBADF00D, m_function_hook, &detour, &jmp_ret, 5)) {
     // return a error string in case something goes wrong
     // spdlog::error("[{}] failed to initialize", get_name());
     return "Failed to initialize ModSample";
@@ -25,3 +26,4 @@ std::optional<std::string> ModSample::on_initialize() {
 //void ModSample::on_draw_debug_ui() {}
 // will show up in main window, dump ImGui widgets you want here
 //void ModSample::on_draw_ui() {}
+#endif
