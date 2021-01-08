@@ -288,6 +288,61 @@ public:
     // can be used for ModValues, like Mod_ValueName
     virtual std::string generate_name(std::string_view name) { return std::string{ get_name() } + "_" + name.data(); }
 
+	// Wrapper for easy install of hooks.
+	// \param offset : offset from game exe base where hook will be installed 
+	// \param hook : FunctionHook object instance
+	// \param detour : Function pointer to your naked detour function.
+	// if your detour function is called my_detour then just pass &my_detour
+	// \param ret : Pointer to a variable that will get return address
+	// \param next_instruction_offset : Optional offset to the next instruction to calculate return address automatically
+	// leave this blank to get return address from minhook, note that minhook copies overwritten bytes automatically.
+	inline bool install_hook_offset(ptrdiff_t offset, std::unique_ptr<FunctionHook>& hook, void* detour, uintptr_t* ret, ptrdiff_t next_instruction_offset = 0) {
+		uintptr_t base = g_framework->get_module().as<uintptr_t>();
+		uintptr_t location = base + offset;
+#ifdef _DEBUG
+		if (hook) {
+			throw std::runtime_error("Install hook called multiple times with same instance\n");
+		}
+		printf("Installing offset hook at location: %p\n", location);
+#endif
+		hook = std::make_unique<FunctionHook>(location, detour);
+		if (!hook->create()) {
+			spdlog::error("Failed to create hook!");
+			return false;
+		}
+
+		if (next_instruction_offset) {
+			*ret = location + next_instruction_offset;
+		}
+		else {
+			*ret = hook->get_original();
+		}
+		return true;
+	}
+
+	// same deal but using absolute address
+	inline bool install_hook_absolute(uintptr_t location, std::unique_ptr<FunctionHook>& hook, void* detour, uintptr_t* ret, ptrdiff_t next_instruction_offset = 0) {
+#ifdef _DEBUG
+		if (hook) {
+			throw std::runtime_error("Install hook called multiple times with same instance\n");
+		}
+		printf("Installing absolute hook at location: %p\n", location);
+#endif
+		hook = std::make_unique<FunctionHook>(location, detour);
+		if (!hook->create()) {
+			spdlog::error("Failed to create hook!");
+			return false;
+		}
+
+		if (next_instruction_offset) {
+			*ret = location + next_instruction_offset;
+		}
+		else {
+			*ret = hook->get_original();
+		}
+		return true;
+	}
+
     // Called when ModFramework::initialize finishes in the first render frame
     // Returns an error string if it fails
     virtual std::optional<std::string> on_initialize() { return std::nullopt; };

@@ -1,1 +1,4 @@
 build64/
+lsp/
+compile_commands.json
+.clangd/
