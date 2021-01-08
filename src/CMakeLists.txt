@@ -12,10 +12,6 @@ set(HOOKS_SRC
 set(MODS_SRC
     mods/SimpleMod.hpp
     mods/SimpleMod.cpp
-    mods/FirstPerson.hpp
-    mods/FirstPerson.cpp
-    mods/FreeCam.hpp
-    mods/FreeCam.cpp
 )
 
 set(SDK_SRC
@@ -23,13 +19,6 @@ set(SDK_SRC
     sdk/ReClass_Internal.hpp
     sdk/Enums_Internal.hpp
     sdk/Offsets.hpp
-)
-
-set(IMGUI_SRC
-    fw-imgui/imgui_impl_win32.h
-    fw-imgui/imgui_impl_win32.cpp
-    fw-imgui/imgui_impl_dx11.h
-    fw-imgui/imgui_impl_dx11.cpp
 )
 
 set(UTILITY_SRC
@@ -62,6 +51,16 @@ set(FRAMEWORK_SRC
     Config.hpp
 )
 
+option(HOOK_D3D "Hook direct3D" OFF)
+
+if(HOOK_D3D)
+set(IMGUI_SRC
+    fw-imgui/imgui_impl_win32.h
+    fw-imgui/imgui_impl_win32.cpp
+    fw-imgui/imgui_impl_dx11.h
+    fw-imgui/imgui_impl_dx11.cpp
+)
+else()
 set(IM_WINDOW_DX11
     ImWindowDX11/ImwPlatformWindowDX11.cpp  
     ImWindowDX11/ImwPlatformWindowDX11.h
@@ -77,15 +76,20 @@ set(IM_WINDOW_EASY_WINDOW
     ImWindowEasyWindow/ImwWindowManagerEasyWindow.cpp
     ImWindowEasyWindow/ImwWindowManagerEasyWindow.h
 )
+endif()
 
-source_group("imgui", FILES ${IMGUI_SRC})
 source_group("Hooks" FILES ${HOOKS_SRC})
 source_group("Mods" FILES ${MODS_SRC})
 source_group("SDK" FILES ${SDK_SRC})
 source_group("Utility" FILES ${UTILITY_SRC})
 source_group("Framework" FILES ${FRAMEWORK_SRC})
-source_group("ImWindowDX11" FILES ${IM_WINDOW_DX11})
-source_group("ImWindowEasyWindow" FILES ${IM_WINDOW_EASY_WINDOW})
+
+if(HOOK_D3D)
+    source_group("imgui", FILES ${IMGUI_SRC})
+else()
+    source_group("ImWindowDX11" FILES ${IM_WINDOW_DX11})
+    source_group("ImWindowEasyWindow" FILES ${IM_WINDOW_EASY_WINDOW})
+endif()
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
             Main.cpp
